@@ -4,7 +4,7 @@ import random
 
 # Use a service account
 cred = credentials.Certificate(
-    '../../ecohub-707c9-firebase-adminsdk-ctcaz-710ec24c6b.json')
+    '../ecohub-707c9-firebase-adminsdk-ctcaz-710ec24c6b.json')
 initialize_app(cred)
 
 ####### LIGHTS ######
