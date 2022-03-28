@@ -3,9 +3,7 @@ from datetime import datetime, timedelta, date
 import random
 
 # Use a service account
-# cred = credentials.Certificate(
-#     '../ecohub-707c9-firebase-adminsdk-ctcaz-710ec24c6b.json')
-initialize_app({
+cred = credentials.Certificate({
     "type": "service_account",
     "project_id": "ecohub-707c9",
     "private_key_id": "710ec24c6babe84ec9ec1bcc5a6a3f8bbedb1330",
@@ -18,6 +16,7 @@ initialize_app({
     "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-ctcaz%40ecohub-707c9.iam.gserviceaccount.com"
 
 })
+initialize_app(cred)
 
 ####### LIGHTS ######
 
