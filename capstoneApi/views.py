@@ -2,7 +2,6 @@ from datetime import datetime
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-import requests
 from jobscheduler.lights import pauseLight, resumeLight, setWeekdayLightOn, setWeekdayLightOff, setWeekendLightOn, setWeekendLightOff
 from firebase.firebase import getLights, getLight, insertLight, getTemps, insertTemp, insertLightDuration, setLight
 
@@ -10,9 +9,20 @@ from firebase.firebase import getLights, getLight, insertLight, getTemps, insert
 @api_view(['GET'])
 def api_overview(request):
     data = {
-        "all_entries": "getLights/",
-        "single_entry": "getLight/<str:pk>/",
-        "create_entry": "insertLight/",
+        "get Lights": "getLights/<str:room>/",
+        "get Light": "getLight/<str:room>/",
+        "set Light": "setLight/<str:room>/<str:on/off>/",
+        "insert Light": "insertLight/",
+        "set time of light to turn on on weekdays": "weekdayLightOn/<str:room>/<str:24hTime>/",
+        "set time of light to turn off on weekdays": "weekdayLightOff/<str:room>/<str:24hTime>/",
+        "set time of light to turn on on weekends": "weekendLightOn/<str:room>/<str:24hTime>/",
+        "set time of light to turn off on weekends": "weekendLightOff/<str:room>/<str:24hTime>/",
+        "pause automated lights": "pauseLight/<str:room>/",
+        "resume automated lights": "resumeLight/<str:room>/",
+        "get Temperatures": "getTemps/",
+        "get Temperature": "getTemp/<str:time>/",
+        "set Temperatures": "setTemp/<str:temp>/",
+        "insert Temperatures": "insertTemp/",
     }
     return Response(data=data, status=status.HTTP_200_OK)
 
