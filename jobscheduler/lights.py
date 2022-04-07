@@ -1,7 +1,5 @@
-import requests
 from apscheduler.triggers.cron import CronTrigger
-from firebase.firebase import insertLight
-from capstoneApi.external import lights
+from firebase.firebase import insertLight, setLight
 from jobscheduler.scheduler import scheduler
 
 '''
@@ -126,10 +124,10 @@ def resumeLight(room):
 
 
 def lightOn(room):
-    res = requests.get(lights[room]+lights['setLight']+'on').json()
+    res = setLight(room, 'on')
     insertLight(res)
 
 
 def lightOff(room):
-    res = requests.get(lights[room]+lights['setLight']+'off').json()
+    res = setLight(room, 'off')
     insertLight(res)

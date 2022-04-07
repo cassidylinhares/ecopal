@@ -7,8 +7,6 @@ urlpatterns = [
     path('getLight/<str:room>/', views.get_light, name="getLight"),
     path('setLight/<str:room>/<str:cmd>/', views.set_light, name="setLight"),
     path('insertLight/', views.insert_light, name="insertLight"),
-    # path('updateLight/<str:pk>/', views.update_light, name="updateLight"),
-    # path('deleteLight/<str:pk>/', views.delete_light, name="deleteLight"),
 
     path('weekdayLightOn/<str:room>/<str:time>/',
          views.set_weekday_schedule_light_on, name='weekdayLightOn'),

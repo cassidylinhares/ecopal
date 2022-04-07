@@ -4,8 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import requests
 from jobscheduler.lights import pauseLight, resumeLight, setWeekdayLightOn, setWeekdayLightOff, setWeekendLightOn, setWeekendLightOff
-from firebase.firebase import getLights, getLight, insertLight, getTemps, insertTemp, insertLightDuration
-from capstoneApi.external import thermostat, lights
+from firebase.firebase import getLights, getLight, insertLight, getTemps, insertTemp, insertLightDuration, setLight
 
 
 @api_view(['GET'])
@@ -14,8 +13,6 @@ def api_overview(request):
         "all_entries": "getLights/",
         "single_entry": "getLight/<str:pk>/",
         "create_entry": "insertLight/",
-        # "update_entry": "updateLight/<str:pk>/",
-        # "delete_entry": "deleteLight/<str:pk>/",
     }
     return Response(data=data, status=status.HTTP_200_OK)
 
@@ -43,13 +40,8 @@ def set_light(request, room, cmd):
     try:
         lastOn = getLight(room)
 
-        res = requests.get(lights[room]+lights['setLight']+cmd).json()
+        res = setLight(room, cmd)
         entry = insertLight(res)
-        # light = {
-        #     'name': res['name'],
-        #     'status': res['status'],
-        #     'time': time.strftime("%Y-%m-%dT%H:%M:%SZ")
-        # }
 
         if cmd == 'off':
             entry = insertLightDuration(room, lastOn)
@@ -122,9 +114,9 @@ def pause_schedule_light(request, room):
 @api_view(['GET'])
 def resume_schedule_light(request, room):
     try:
-        print(request.data)
-        entry = insertLight(request.data)
-        return Response(data=entry, status=status.HTTP_201_CREATED)
+        print(room)
+        res = resumeLight(room)
+        return Response(data=res, status=status.HTTP_201_CREATED)
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -143,7 +135,7 @@ def get_temps(request):
 @api_view(['GET'])
 def set_temp(request, temp):
     try:
-        res = requests.get(thermostat['base']+thermostat['setTemp']+temp)
+        res = {}  # requests.get(thermostat['base']+thermostat['setTemp']+temp)
         return Response(data=res, status=status.HTTP_200_OK)
     except:
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -162,27 +154,3 @@ def insert_temp(request):
         return Response(data=temp, status=status.HTTP_201_CREATED)
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-# @api_view(['PUT'])
-# def update_light(request, pk):
-#     try:
-#         entry = Moisture.objects.get(id=pk)
-#         serializer = MoistureSerializer(instance=entry, data=request.data)
-
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_200_OK)
-
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#     except:
-#         return Response(status=status.HTTP_404_NOT_FOUND)
-
-# @api_view(['DELETE'])
-# def delete_light(request, pk):
-#     try:
-#         entry = Moisture.objects.get(id=pk)
-#         entry.delete()
-
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-#     except:
-#         return Response(status=status.HTTP_404_NOT_FOUND)
