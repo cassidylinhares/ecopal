@@ -12,6 +12,9 @@ time: 22:00 (24h format)
 
 def setWeekdayLightOn(room: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
+    h = (h+4) % 24  # convert to UTC
+    if h == '0':
+        h = '00'
 
     # check if job already exist
     jobId = 'weekday_light_on_' + room
@@ -23,7 +26,7 @@ def setWeekdayLightOn(room: str, time: str):
 
     # set schedule
     lightOnTrigger = CronTrigger(
-        year='*', month='*', day='*', day_of_week='0-6', hour=str(h), minute=str(m), second='0')
+        year='*', month='*', day='*', day_of_week='mon,tue,wed,thu,fri', hour=str(h), minute=str(m), second='0')
 
     # add job
     scheduler.add_job(lambda: lightOn(room), lightOnTrigger, id=jobId)
@@ -36,6 +39,9 @@ def setWeekdayLightOn(room: str, time: str):
 
 def setWeekdayLightOff(room: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
+    h = (h+4) % 24  # convert to UTC
+    if h == '0':
+        h = '00'
 
     # check if job already exist
     jobId = 'weekday_light_off_' + room
@@ -47,7 +53,7 @@ def setWeekdayLightOff(room: str, time: str):
 
     # set schedule
     lightOffTrigger = CronTrigger(
-        year='*', month='*', day='*', day_of_week='0-6', hour=str(h), minute=str(m), second='0')
+        year='*', month='*', day='*', day_of_week='mon,tue,wed,thu,fri', hour=str(h), minute=str(m), second='0')
 
     # add job
     scheduler.add_job(lambda: lightOff(room), lightOffTrigger, id=jobId)
@@ -62,6 +68,9 @@ def setWeekdayLightOff(room: str, time: str):
 
 def setWeekendLightOn(room: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
+    h = (h+4) % 24  # convert to UTC
+    if h == '0':
+        h = '00'
 
     # check if job already exist
     jobId = 'weekend_light_on_' + room
@@ -73,7 +82,7 @@ def setWeekendLightOn(room: str, time: str):
 
     # set schedule
     lightOnTrigger = CronTrigger(
-        year='*', month='*', day='*', day_of_week='5-7', hour=str(h), minute=str(m), second='0')
+        year='*', month='*', day='*', day_of_week='sat,sun', hour=str(h), minute=str(m), second='0')
 
     # add job
     scheduler.add_job(lambda: lightOn(room), lightOnTrigger, id=jobId)
@@ -86,6 +95,9 @@ def setWeekendLightOn(room: str, time: str):
 
 def setWeekendLightOff(room: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
+    h = (h+4) % 24  # convert to UTC
+    if h == '0':
+        h = '00'
 
     # check if job already exist
     jobId = 'weekend_light_off_' + room
@@ -97,13 +109,13 @@ def setWeekendLightOff(room: str, time: str):
 
     # set schedule
     lightOffTrigger = CronTrigger(
-        year='*', month='*', day='*', day_of_week='5-7', hour=str(h), minute=str(m), second='0')
+        year='*', month='*', day='*', day_of_week='sat,sun', hour=str(h), minute=str(m), second='0')
 
     # add job
     scheduler.add_job(lambda: lightOff(room), lightOffTrigger, id=jobId)
 
     # update db to reflect the new changes
-    insertScheduler(room, 'weekdendOff', time)
+    insertScheduler(room, 'weekendOff', time)
     res = insertScheduler(room, 'paused', False)
     return res
 
@@ -116,10 +128,14 @@ def pauseLight(room: str):
     jobWeekendOff = 'weekend_light_off_' + room
     jobWeekendOn = 'weekend_light_on_' + room
 
-    scheduler.pause_job(job_id=jobWeekdayOff)
-    scheduler.pause_job(job_id=jobWeekdayOn)
-    scheduler.pause_job(job_id=jobWeekendOff)
-    scheduler.pause_job(job_id=jobWeekendOn)
+    if scheduler.get_job(job_id=jobWeekdayOff) is not None:
+        scheduler.pause_job(job_id=jobWeekdayOff)
+    if scheduler.get_job(job_id=jobWeekdayOn) is not None:
+        scheduler.pause_job(job_id=jobWeekdayOn)
+    if scheduler.get_job(job_id=jobWeekendOff) is not None:
+        scheduler.pause_job(job_id=jobWeekendOff)
+    if scheduler.get_job(job_id=jobWeekendOn) is not None:
+        scheduler.pause_job(job_id=jobWeekendOn)
 
     # update db to reflect the new changes
     res = insertScheduler(room, 'paused', True)
@@ -132,10 +148,14 @@ def resumeLight(room: str):
     jobWeekendOff = 'weekend_light_off_' + room
     jobWeekendOn = 'weekend_light_on_' + room
 
-    scheduler.resume_job(job_id=jobWeekdayOff)
-    scheduler.resume_job(job_id=jobWeekdayOn)
-    scheduler.resume_job(job_id=jobWeekendOff)
-    scheduler.resume_job(job_id=jobWeekendOn)
+    if scheduler.get_job(job_id=jobWeekdayOff) is not None:
+        scheduler.resume_job(job_id=jobWeekdayOff)
+    if scheduler.get_job(job_id=jobWeekdayOn) is not None:
+        scheduler.resume_job(job_id=jobWeekdayOn)
+    if scheduler.get_job(job_id=jobWeekendOff) is not None:
+        scheduler.resume_job(job_id=jobWeekendOff)
+    if scheduler.get_job(job_id=jobWeekendOn) is not None:
+        scheduler.resume_job(job_id=jobWeekendOn)
 
     # update db to reflect the new changes
     res = insertScheduler(room, 'paused', False)
