@@ -12,9 +12,7 @@ time: 22:00 (24h format)
 
 def setWeekdayLightOn(room: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
-    h = (h+4) % 24  # convert to UTC
-    if h == '0':
-        h = '00'
+    h = (int(h)+4) % 24  # convert to UTC
 
     # check if job already exist
     jobId = 'weekday_light_on_' + room
@@ -39,9 +37,7 @@ def setWeekdayLightOn(room: str, time: str):
 
 def setWeekdayLightOff(room: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
-    h = (h+4) % 24  # convert to UTC
-    if h == '0':
-        h = '00'
+    h = (int(h)+4) % 24  # convert to UTC
 
     # check if job already exist
     jobId = 'weekday_light_off_' + room
@@ -68,9 +64,7 @@ def setWeekdayLightOff(room: str, time: str):
 
 def setWeekendLightOn(room: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
-    h = (h+4) % 24  # convert to UTC
-    if h == '0':
-        h = '00'
+    h = (int(h)+4) % 24  # convert to UTC
 
     # check if job already exist
     jobId = 'weekend_light_on_' + room
@@ -95,9 +89,7 @@ def setWeekendLightOn(room: str, time: str):
 
 def setWeekendLightOff(room: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
-    h = (h+4) % 24  # convert to UTC
-    if h == '0':
-        h = '00'
+    h = (int(h)+4) % 24  # convert to UTC
 
     # check if job already exist
     jobId = 'weekend_light_off_' + room

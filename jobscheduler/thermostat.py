@@ -7,9 +7,7 @@ from jobscheduler.scheduler import scheduler
 
 def setWeekdayThermostatOn(temp: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
-    h = (h+4) % 24  # convert to UTC
-    if h == '0':
-        h = '00'
+    h = (int(h)+4) % 24  # convert to UTC
 
     # check if job already exist
     jobId = 'weekday_thermostat_on'
@@ -37,9 +35,7 @@ def setWeekdayThermostatOn(temp: str, time: str):
 
 def setWeekdayThermostatOff(temp: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
-    h = (h+4) % 24  # convert to UTC
-    if h == '0':
-        h = '00'
+    h = (int(h)+4) % 24  # convert to UTC
 
     # check if job already exist
     jobId = 'weekday_thermostat_off'
@@ -68,9 +64,7 @@ def setWeekdayThermostatOff(temp: str, time: str):
 
 def setWeekendThermostatOn(temp: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
-    h = (h+4) % 24  # convert to UTC
-    if h == '0':
-        h = '00'
+    h = (int(h)+4) % 24  # convert to UTC
 
     # check if job already exist
     jobId = 'weekend_thermostat_on'
@@ -97,9 +91,7 @@ def setWeekendThermostatOn(temp: str, time: str):
 
 def setWeekendThermostatOff(temp: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
-    h = (h+4) % 24  # convert to UTC
-    if h == '0':
-        h = '00'
+    h = (int(h)+4) % 24  # convert to UTC
 
     # check if job already exist
     jobId = 'weekend_thermostat_off'
