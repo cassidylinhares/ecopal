@@ -21,7 +21,7 @@ def setWeekdayThermostatOn(temp: str, time: str):
         year='*', month='*', day='*', day_of_week='0-6', hour=str(h), minute=str(m), second='0')
 
     # add job
-    scheduler.add_job(lambda: thermostatOn(
+    scheduler.add_job(lambda: thermostatTemp(
         temp), thermostatOnTrigger, id=jobId)
 
     # update db to reflect the new changes
@@ -48,7 +48,7 @@ def setWeekdayThermostatOff(temp: str, time: str):
         year='*', month='*', day='*', day_of_week='0-6', hour=str(h), minute=str(m), second='0')
 
     # add job
-    scheduler.add_job(lambda: thermostatOff(
+    scheduler.add_job(lambda: thermostatTemp(
         temp), thermostatOffTrigger, id=jobId)
 
     # update db to reflect the new changes
@@ -76,7 +76,7 @@ def setWeekendThermostatOn(temp: str, time: str):
         year='*', month='*', day='*', day_of_week='5-7', hour=str(h), minute=str(m), second='0')
 
     # add job
-    scheduler.add_job(lambda: thermostatOn(
+    scheduler.add_job(lambda: thermostatTemp(
         temp), thermostatOnTrigger, id=jobId)
 
     # update db to reflect the new changes
@@ -102,7 +102,7 @@ def setWeekendThermostatOff(temp: str, time: str):
         year='*', month='*', day='*', day_of_week='5-7', hour=str(h), minute=str(m), second='0')
 
     # add job
-    scheduler.add_job(lambda: thermostatOff(
+    scheduler.add_job(lambda: thermostatTemp(
         temp), thermostatOffTrigger, id=jobId)
 
     # update db to reflect the new changes
@@ -148,11 +148,6 @@ def resumeThermostat():
 ###### HELPERS ######
 
 
-def thermostatOn(temp: str):
-    res = setTemp(temp)
-    insertTemp(res)
-
-
-def thermostatOff(temp: str):
+def thermostatTemp(temp: str):
     res = setTemp(temp)
     insertTemp(res)

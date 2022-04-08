@@ -83,8 +83,8 @@ def insert_light(request):
 def set_weekday_schedule_light_on(request, room, time):
     try:
         print(room, time)
-        setWeekdayLightOn(room, time)
-        return Response(data="successfully updated", status=status.HTTP_201_CREATED)
+        res = setWeekdayLightOn(room, time)
+        return Response(data=res, status=status.HTTP_201_CREATED)
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -93,8 +93,8 @@ def set_weekday_schedule_light_on(request, room, time):
 def set_weekend_schedule_light_on(request, room, time):
     try:
         print(room, time)
-        setWeekendLightOn(room, time)
-        return Response(data="successfully updated", status=status.HTTP_201_CREATED)
+        res = setWeekendLightOn(room, time)
+        return Response(data=res, status=status.HTTP_201_CREATED)
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -103,8 +103,8 @@ def set_weekend_schedule_light_on(request, room, time):
 def set_weekday_schedule_light_off(request, room, time):
     try:
         print(room, time)
-        setWeekdayLightOff(room, time)
-        return Response(data="successfully updated", status=status.HTTP_201_CREATED)
+        res = setWeekdayLightOff(room, time)
+        return Response(data=res, status=status.HTTP_201_CREATED)
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -113,8 +113,8 @@ def set_weekday_schedule_light_off(request, room, time):
 def set_weekend_schedule_light_off(request, room, time):
     try:
         print(room, time)
-        setWeekendLightOff(room, time)
-        return Response(data="successfully updated", status=status.HTTP_201_CREATED)
+        res = setWeekendLightOff(room, time)
+        return Response(data=res, status=status.HTTP_201_CREATED)
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
