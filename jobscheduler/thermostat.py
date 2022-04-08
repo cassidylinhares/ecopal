@@ -1,20 +1,15 @@
 from apscheduler.triggers.cron import CronTrigger
-from firebase.firebase import insertLight, setLight, insertScheduler
+from firebase.firebase import insertTemp, setTemp, insertScheduler
 from jobscheduler.scheduler import scheduler
-
-'''
-room: select [room1, room2, room3, room4]
-time: 22:00 (24h format)
-'''
 
 ###### WEEKDAYS ######
 
 
-def setWeekdayLightOn(room: str, time: str):
+def setWeekdayThermostatOn(temp: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
 
     # check if job already exist
-    jobId = 'weekday_light_on_' + room
+    jobId = 'weekday_thermostat_on'
     job = scheduler.get_job(job_id=jobId)
 
     # delete if job exist
@@ -22,23 +17,26 @@ def setWeekdayLightOn(room: str, time: str):
         scheduler.remove_job(job_id=jobId)
 
     # set schedule
-    lightOnTrigger = CronTrigger(
+    thermostatOnTrigger = CronTrigger(
         year='*', month='*', day='*', day_of_week='0-6', hour=str(h), minute=str(m), second='0')
 
     # add job
-    scheduler.add_job(lambda: lightOn(room), lightOnTrigger, id=jobId)
+    scheduler.add_job(lambda: thermostatOn(
+        temp), thermostatOnTrigger, id=jobId)
 
     # update db to reflect the new changes
-    insertScheduler(room, 'weekdayOn', time)
-    res = insertScheduler(room, 'paused', False)
+    insertScheduler('thermostat', 'weekdayOn', {
+        u'time': time, u'temp': temp})
+    res = insertScheduler('thermostat', 'paused', False)
+
     return res
 
 
-def setWeekdayLightOff(room: str, time: str):
+def setWeekdayThermostatOff(temp: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
 
     # check if job already exist
-    jobId = 'weekday_light_off_' + room
+    jobId = 'weekday_thermostat_off'
     job = scheduler.get_job(job_id=jobId)
 
     # delete if job exist
@@ -46,25 +44,27 @@ def setWeekdayLightOff(room: str, time: str):
         scheduler.remove_job(job_id=jobId)
 
     # set schedule
-    lightOffTrigger = CronTrigger(
+    thermostatOffTrigger = CronTrigger(
         year='*', month='*', day='*', day_of_week='0-6', hour=str(h), minute=str(m), second='0')
 
     # add job
-    scheduler.add_job(lambda: lightOff(room), lightOffTrigger, id=jobId)
+    scheduler.add_job(lambda: thermostatOff(
+        temp), thermostatOffTrigger, id=jobId)
 
     # update db to reflect the new changes
-    insertScheduler(room, 'weekdayOff', time)
-    res = insertScheduler(room, 'paused', False)
+    insertScheduler('thermostat', 'weekdayOff', {
+        u'time': time, u'temp': temp})
+    res = insertScheduler('thermostat', 'paused', False)
     return res
 
 ###### WEEKENDS ######
 
 
-def setWeekendLightOn(room: str, time: str):
+def setWeekendThermostatOn(temp: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
 
     # check if job already exist
-    jobId = 'weekend_light_on_' + room
+    jobId = 'weekend_thermostat_on'
     job = scheduler.get_job(job_id=jobId)
 
     # delete if job exist
@@ -72,23 +72,25 @@ def setWeekendLightOn(room: str, time: str):
         scheduler.remove_job(job_id=jobId)
 
     # set schedule
-    lightOnTrigger = CronTrigger(
+    thermostatOnTrigger = CronTrigger(
         year='*', month='*', day='*', day_of_week='5-7', hour=str(h), minute=str(m), second='0')
 
     # add job
-    scheduler.add_job(lambda: lightOn(room), lightOnTrigger, id=jobId)
+    scheduler.add_job(lambda: thermostatOn(
+        temp), thermostatOnTrigger, id=jobId)
 
     # update db to reflect the new changes
-    insertScheduler(room, 'weekendOn', time)
-    res = insertScheduler(room, 'paused', False)
+    insertScheduler('thermostat', 'weekendOn', {
+        u'time': time, u'temp': temp})
+    res = insertScheduler('thermostat', 'paused', False)
     return res
 
 
-def setWeekendLightOff(room: str, time: str):
+def setWeekendThermostatOff(temp: str, time: str):
     h, m = time.split(':')[0], time.split(':')[1]
 
     # check if job already exist
-    jobId = 'weekend_light_off_' + room
+    jobId = 'weekend_thermostat_off'
     job = scheduler.get_job(job_id=jobId)
 
     # delete if job exist
@@ -96,25 +98,27 @@ def setWeekendLightOff(room: str, time: str):
         scheduler.remove_job(job_id=jobId)
 
     # set schedule
-    lightOffTrigger = CronTrigger(
+    thermostatOffTrigger = CronTrigger(
         year='*', month='*', day='*', day_of_week='5-7', hour=str(h), minute=str(m), second='0')
 
     # add job
-    scheduler.add_job(lambda: lightOff(room), lightOffTrigger, id=jobId)
+    scheduler.add_job(lambda: thermostatOff(
+        temp), thermostatOffTrigger, id=jobId)
 
     # update db to reflect the new changes
-    insertScheduler(room, 'weekdendOff', time)
-    res = insertScheduler(room, 'paused', False)
+    insertScheduler('thermostat', 'weekdendOff', {
+        u'time': time, u'temp': temp})
+    res = insertScheduler('thermostat', 'paused', False)
     return res
 
 ###### SCHEDULING ######
 
 
-def pauseLight(room: str):
-    jobWeekdayOff = 'weekday_light_off_' + room
-    jobWeekdayOn = 'weekday_light_on_' + room
-    jobWeekendOff = 'weekend_light_off_' + room
-    jobWeekendOn = 'weekend_light_on_' + room
+def pauseThermostat():
+    jobWeekdayOff = 'weekday_thermostat_off'
+    jobWeekdayOn = 'weekday_thermostat_on'
+    jobWeekendOff = 'weekend_thermostat_off'
+    jobWeekendOn = 'weekend_thermostat_on'
 
     scheduler.pause_job(job_id=jobWeekdayOff)
     scheduler.pause_job(job_id=jobWeekdayOn)
@@ -122,15 +126,15 @@ def pauseLight(room: str):
     scheduler.pause_job(job_id=jobWeekendOn)
 
     # update db to reflect the new changes
-    res = insertScheduler(room, 'paused', True)
+    res = insertScheduler('thermostat', 'paused', True)
     return res
 
 
-def resumeLight(room: str):
-    jobWeekdayOff = 'weekday_light_off_' + room
-    jobWeekdayOn = 'weekday_light_on_' + room
-    jobWeekendOff = 'weekend_light_off_' + room
-    jobWeekendOn = 'weekend_light_on_' + room
+def resumeThermostat():
+    jobWeekdayOff = 'weekday_thermostat_off'
+    jobWeekdayOn = 'weekday_thermostat_on'
+    jobWeekendOff = 'weekend_thermostat_off'
+    jobWeekendOn = 'weekend_thermostat_on'
 
     scheduler.resume_job(job_id=jobWeekdayOff)
     scheduler.resume_job(job_id=jobWeekdayOn)
@@ -138,17 +142,17 @@ def resumeLight(room: str):
     scheduler.resume_job(job_id=jobWeekendOn)
 
     # update db to reflect the new changes
-    res = insertScheduler(room, 'paused', False)
+    res = insertScheduler('thermostat', 'paused', False)
     return res
 
 ###### HELPERS ######
 
 
-def lightOn(room: str):
-    res = setLight(room, 'on')
-    insertLight(res)
+def thermostatOn(temp: str):
+    res = setTemp(temp)
+    insertTemp(res)
 
 
-def lightOff(room: str):
-    res = setLight(room, 'off')
-    insertLight(res)
+def thermostatOff(temp: str):
+    res = setTemp(temp)
+    insertTemp(res)

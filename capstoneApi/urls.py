@@ -21,7 +21,19 @@ urlpatterns = [
     path('pauseLight/<str:room>/', views.pause_schedule_light, name='pauseLight'),
 
     path('getTemps/', views.get_temps, name="getTemps"),
-    path('getTemp/<str:time>/', views.get_light, name="getTemp"),
+    path('getTemp/', views.get_temp, name="getTemp"),
     path('setTemp/<str:temp>/', views.set_temp, name="setTemp"),
     path('insertTemp/', views.insert_temp, name="insertTemp"),
+
+    path('weekdayThermostatOn/<str:temp>/<str:time>/',
+         views.set_weekday_schedule_thermostat_on, name='weekdayThermostatOn'),
+    path('weekdayThermostatOff/<str:temp>/<str:time>/',
+         views.set_weekday_schedule_thermostat_off, name='weekdayThermostatOff'),
+    path('weekendThermostatOn/<str:temp>/<str:time>/',
+         views.set_weekend_schedule_thermostat_on, name='weekendThermostatOn'),
+    path('weekendThermostatOff/<str:temp>/<str:time>/',
+         views.set_weekend_schedule_thermostat_off, name='weekendThermostatOff'),
+    path('resumeThermostat/',
+         views.resume_schedule_thermostat, name='resumeThermostat'),
+    path('pauseThermostat/', views.pause_schedule_thermostat, name='pauseThermostat'),
 ]

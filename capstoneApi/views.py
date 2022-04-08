@@ -3,7 +3,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from jobscheduler.lights import pauseLight, resumeLight, setWeekdayLightOn, setWeekdayLightOff, setWeekendLightOn, setWeekendLightOff
-from firebase.firebase import getLights, getLight, insertLight, getTemps, insertTemp, insertLightDuration, setLight
+from jobscheduler.thermostat import pauseThermostat, resumeThermostat, setWeekdayThermostatOn, setWeekdayThermostatOff, setWeekendThermostatOn, setWeekendThermostatOff
+from firebase.firebase import getLights, getLight, insertLight, getTemps, insertTemp, insertLightDuration, setLight, setTemp, getTemp
 
 
 @api_view(['GET'])
@@ -20,9 +21,16 @@ def api_overview(request):
         "pause automated lights": "pauseLight/<str:room>/",
         "resume automated lights": "resumeLight/<str:room>/",
         "get Temperatures": "getTemps/",
-        "get Temperature": "getTemp/<str:time>/",
+        "get Temperature": "getTemp/",
         "set Temperatures": "setTemp/<str:temp>/",
         "insert Temperatures": "insertTemp/",
+        "set time of thermo to go to temp on weekdays": "weekdayThermostatOn/<str:temp>/<str:24hTime>/",
+        "set time of thermo to go back to temp on weekdays": "weekdayThermostatOff/<str:temp>/<str:24hTime>/",
+        "set time of thermo to go to temp on weekends": "weekendThermostatOn/<str:temp>/<str:24hTime>/",
+        "set time of thermo to go back to temp on weekends": "weekendThermostatOff/<str:temp>/<str:24hTime>/",
+        "pause automated thermostat": "pauseThermostat/",
+        "resume automated thermostat": "resumeThermostat/",
+
     }
     return Response(data=data, status=status.HTTP_200_OK)
 
@@ -143,24 +151,92 @@ def get_temps(request):
 
 
 @api_view(['GET'])
+def get_temp(request):
+    try:
+        lastest_entry = getTemp()
+        return Response(data=lastest_entry, status=status.HTTP_200_OK)
+    except:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
 def set_temp(request, temp):
     try:
-        res = {}  # requests.get(thermostat['base']+thermostat['setTemp']+temp)
-        return Response(data=res, status=status.HTTP_200_OK)
+        res = setTemp(temp)
+        print(res)
+        entry = insertTemp(res)
+        return Response(data=entry, status=status.HTTP_200_OK)
     except:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['POST'])
 def insert_temp(request):
-    time = datetime.now()
     try:
-        temp = {
+        data = {
             u'temp': request.data['temp'],
-            u'time': time.strftime("%Y-%m-%dT%H:%M:%SZ")
+            u'time': datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
         }
-        # entry = insertTemp(temp)
+        entry = insertTemp(data)
 
-        return Response(data=temp, status=status.HTTP_201_CREATED)
+        return Response(data=entry, status=status.HTTP_201_CREATED)
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def set_weekday_schedule_thermostat_on(request, temp, time):
+    try:
+        print(temp, time)
+        res = setWeekdayThermostatOn(temp, time)
+        return Response(data=res, status=status.HTTP_201_CREATED)
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def set_weekend_schedule_thermostat_on(request, temp, time):
+    try:
+        print(temp, time)
+        res = setWeekendThermostatOn(temp, time)
+        return Response(data=res, status=status.HTTP_201_CREATED)
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def set_weekday_schedule_thermostat_off(request, temp, time):
+    try:
+        print(temp, time)
+        res = setWeekdayThermostatOff(temp, time)
+        return Response(data=res, status=status.HTTP_201_CREATED)
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def set_weekend_schedule_thermostat_off(request, temp, time):
+    try:
+        print(temp, time)
+        res = setWeekendThermostatOff(temp, time)
+        return Response(data=res, status=status.HTTP_201_CREATED)
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def pause_schedule_thermostat(request):
+    try:
+        res = pauseThermostat()
+        return Response(data=res, status=status.HTTP_201_CREATED)
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def resume_schedule_thermostat(request):
+    try:
+        res = resumeThermostat()
+        return Response(data=res, status=status.HTTP_201_CREATED)
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
